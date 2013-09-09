@@ -3,8 +3,8 @@
 # camel.tiger(): The user interface for tiger()                                    #
 # Author: Xingguo Li                                                               #
 # Email: <xingguo.leo@gmail.com>                                                   #
-# Date: Aug 23th, 2013                                                             #
-# Version: 0.1.0                                                                   #
+# Date: Aug 25th, 2013                                                             #
+# Version: 0.1.1                                                                   #
 #----------------------------------------------------------------------------------#
 
 camel.tiger <- function(data,
@@ -65,7 +65,7 @@ camel.tiger <- function(data,
   {
     if(method == "slasso") {
       if(is.null(nlambda)){
-        nlambda = 5
+        nlambda = 10
       }
       if(is.null(lambda.min.ratio))
         lambda.min.ratio = 0.4
@@ -74,10 +74,10 @@ camel.tiger <- function(data,
     }
     else {
       if(is.null(nlambda))
-        nlambda = 5
+        nlambda = 10
       if(is.null(lambda.min.ratio))
-        lambda.min.ratio = 0.4
-        lambda.max = min(max(S-diag(diag(S))),-min(S-diag(diag(S))))
+        lambda.min.ratio = 0.1
+        lambda.max = max(diag(S))
       #lambda.max = pi*sqrt(log(d)/n)
       lambda.min = lambda.min.ratio*lambda.max
       lambda = exp(seq(log(lambda.max), log(lambda.min), length = nlambda))

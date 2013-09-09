@@ -155,13 +155,16 @@ void slim_sqrt_mfista(double *b, double *A, double *beta, int *n, int *d, double
         ite21=0;
         y1_dif = 1;
         opt_dif = 1;
-        get_residual(bAy1, b, A, y1, idx_y1, &ndata, &size_y1); // bAy1=b-A*y1
-        get_dual2(u_y, bAy1, &imu, &ndata); //u_y=proj(bAy1)
-        get_grad(g, A, u_y, &dim, &ndata); //g=-A*u_y
+        //get_residual(bAy1, b, A, y1, idx_y1, &ndata, &size_y1); // bAy1=b-A*y1
+        //get_dual2(u_y, bAy1, &imu, &ndata); //u_y=proj(bAy1)
+        //get_grad(g, A, u_y, &dim, &ndata); //g=-A*u_y
         while(y1_dif>eps1 && ite1<max_ite1){
         //while(opt_dif>eps1 && ite1<max_ite1){
             y1_norm1_pre = y1_norm1;
             ite2=0;
+            get_residual(bAy1, b, A, y1, idx_y1, &ndata, &size_y1); // bAy1=b-A*y1
+            get_dual2(u_y, bAy1, &imu, &ndata); //u_y=proj(bAy1)
+            get_grad(g, A, u_y, &dim, &ndata); //g=-A*u_y
             if(T<T0){
                 get_base(&obj_base, u_y, bAy1, &imu, &ndata); //obj_base=u_y*bAy1-imu*||u_y||_2^2/2
                 gap_track = 1;
@@ -254,9 +257,6 @@ void slim_sqrt_mfista(double *b, double *A, double *beta, int *n, int *d, double
             y1_dif = fabs(y1_norm1 - y1_norm1_pre);
             t1 = t2;
 
-            get_residual(bAy1, b, A, y1, idx_y1, &ndata, &size_y1); // bAy1=b-A*y1
-            get_dual2(u_y, bAy1, &imu, &ndata); //u_y=proj(bAy1)
-            get_grad(g, A, u_y, &dim, &ndata); //g=-A*u_y
             ite1++;
             ite21 += ite2;
         }

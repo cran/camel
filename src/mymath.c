@@ -198,3 +198,248 @@ void get_base(double *base, double *u, double *r, double *mmu, int *nn)
     }
     *base -= mu*tmp/2;
 }
+// r = y - A * x, r is n by m, A is n by d, x d by m
+void get_residual_mat(double *r, double *y, double *A, double *x, int *idx_x, int *size_x, int *nn, int *mm, int *dd)
+{
+    int i,j,k,id;
+    int n,m,d,size;
+    double tmp;
+    n = *nn;
+    m = *mm;
+    d = *dd;
+    size = *size_x;
+    
+    for(i=0;i<m;i++){
+        for(j=0;j<n;j++){
+            tmp = 0;
+            for(k=0;k<size;k++){
+                id = idx_x[k];
+                tmp += A[id*n+j]*x[i*d+id];
+            }
+            r[i*n+j] = y[i*n+j]-tmp;
+        }
+    }
+}
+
+// u = proj(r)
+void get_dual_mat(double *u, double *r, double *mmu, int *nn, int *mm)
+{
+    int i,j,n,m;
+    double mu, zv, tmp_sum;
+    mu = *mmu;
+    n = *nn;
+    m = *mm;
+    zv = 1;
+
+    for(i=0;i<m;i++){
+        tmp_sum = 0;
+        for(j=0;j<n;j++){
+            u[i*n+j] = r[i*n+j]/mu;
+            tmp_sum += u[i*n+j]*u[i*n+j];
+        }
+        tmp_sum = sqrt(tmp_sum);
+        if (tmp_sum >= zv) {
+            for(j=0;j<n;j++){
+                u[i*n+j] = u[i*n+j]/tmp_sum;
+            }
+        }
+    }
+}
+
+void proj_mat_sparse(double *u, int *idx, int *size_u, double *lambda, int *nn, int *mm)
+{
+    int i,j,n,m,size,flag;
+    double mu, zero, tmp_sum;
+    n = *nn;
+    m = *mm;
+    zero = 0;
+    size = 0;
+
+    for(i=0;i<n;i++){
+        tmp_sum = 0;
+        for(j=0;j<m;j++){
+            tmp_sum += u[j*n+i]*u[j*n+i];
+        }
+        tmp_sum = sqrt(tmp_sum);
+        flag = 0;
+        for(j=0;j<m;j++){
+            u[j*n+i] = u[j*n+i]*max(1-*lambda/tmp_sum, zero);
+            if(flag == 0){
+                if(u[j*n+i] != 0){
+                    flag = 1;
+                }
+            }
+        }
+        if(flag == 1){
+            idx[size] = i;
+            size++;
+        }
+    }
+    *size_u = size;
+}
+
+// g = -A' * u, g is d by m, A is n by d, u is n by m
+void get_grad_mat(double *g, double *A, double *u, int *dd, int *nn, int *mm)
+{
+    int i,j,k;
+    int d,n,m;
+    double tmp;
+
+    d = *dd;
+    n = *nn;
+    m = *mm;
+    
+    for(i=0;i<m;i++){
+        for(j=0;j<d;j++){
+            tmp = 0;
+            for(k=0;k<n;k++){
+                tmp += A[j*n+k]*u[i*n+k];
+            }
+            g[i*d+j] = -tmp;
+        }
+    }
+}
+
+// base = trace(u' * r) + mu * ||u||_F^2/2, u is n by m, r is n by m
+void get_base_mat(double *base, double *fro, double *u, double *r, double *mmu, int *nn, int *mm)
+{
+    int i,j,n,m;
+    double mu,tmp1, tmp2;
+    mu = *mmu;
+    n = *nn; 
+    m = *mm;
+    tmp1 = 0;
+    for(i=0;i<m;i++){
+        for(j=0;j<n;j++){
+            tmp1 += u[i*n+j]*r[i*n+j];
+        }
+    }
+    tmp2 = 0;
+    for(i=0;i<m;i++){
+        for(j=0;j<n;j++){
+            tmp2 += u[i*n+j]*u[i*n+j];
+        }
+    }
+    *fro = tmp2;
+    *base = tmp1 + mu*tmp2/2;
+}
+
+void dif_mat(double *x0, double *x1, double *x2, int *nn, int *mm)
+{
+    int i,j,n,m;
+    
+    n = *nn;
+    m = *mm;
+    for(i=0; i<m; i++){
+        for(j=0; j<n; j++){
+            x0[i*n+j] = x1[i*n+j] - x2[i*n+j];
+        }
+    }
+}
+
+void dif_mat2(double *x0, double *x1, double *x2, double *cc2, int *nn, int *mm)
+{
+    int i,j,n,m;
+    double c2;
+    
+    n = *nn;
+    m = *mm;
+    c2 = *cc2;
+    for(i=0; i<m; i++){
+        for(j=0; j<n; j++){
+            x0[i*n+j] = x1[i*n+j] - c2*x2[i*n+j];
+        }
+    }
+}
+
+// tr(x1'*x2), x1 is n by m, x2, is n by m
+double tr_norm(double *x1, double *x2, int *nn, int *mm)
+{
+    int i,j,k,n,m;
+    double trace;
+    
+    n = *nn;
+    m = *mm;
+    trace = 0;
+    for(i=0; i<m; i++){
+        for(j=0; j<m; j++){
+            for(k=0; k<n; k++){
+                trace += x1[i*n+k]*x2[j*n+k];
+            }
+        }
+    }
+    return trace;
+}
+
+// ||x||_F^2, x is n by m
+double fro_norm(double *x, int *nn, int *mm)
+{
+    int i,j,n,m;
+    double fro;
+    
+    n = *nn;
+    m = *mm;
+    fro = 0;
+    for(i=0; i<m; i++){
+        for(j=0; j<n; j++){
+            fro += x[i*n+j]*x[i*n+j];
+        }
+    }
+    return fro;
+}
+
+double lnorm_12(double *x, int *nn, int *mm)
+{
+    int i,j,n,m;
+    double lnorm,tmp;
+    
+    n = *nn;
+    m = *mm;
+    lnorm = 0;
+    for(i=0; i<n; i++){
+        tmp = 0;
+        for(j=0; j<m; j++){
+            tmp += x[j*n+i]*x[j*n+i];
+        }
+        lnorm += sqrt(tmp);
+    }
+    return lnorm;
+}
+
+void trunc_svd(double *U, double *Vt, double *S, double *x, double *eps, int *nn, int *mm, int *min_nnmm)
+{
+    int i,j,k,n,m,min_nm;
+    double zero, tmp;
+    
+    n = *nn;
+    m = *mm;
+    zero = 0;
+    min_nm = *min_nnmm;
+    for(i=0;i<min_nm;i++){
+        S[i] = max(S[i]-*eps, zero);
+    }
+    for(i=0;i<m;i++){ // z1 = U*S*Vt, U is n by min_dm, S is min_dm, Vt is min_dm by m
+        for(j=0;j<n;j++){
+            tmp = 0;
+            for(k=0;k<min_nm;k++){
+                tmp += U[k*n+j]*S[k]*Vt[i*min_nm+k];
+            }
+            x[i*n+j] = tmp;
+        }
+    }
+}
+
+// x0 <- x1
+void equ_mat(double *x0, double *x1, int *nn, int *mm)
+{
+    int i,j,n,m;
+    
+    n = *nn;
+    m = *mm;
+    
+    for(i=0; i<m; i++){
+        for(j=0; j<n; j++){
+            x0[i*n+j] = x1[i*n+j];
+        }
+    }
+}

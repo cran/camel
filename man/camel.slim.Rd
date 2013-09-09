@@ -2,11 +2,11 @@
 \alias{camel.slim}
 
 \title{
-Sparse Linear Regression using Non-smooth Loss Functions and L1 Regularization
+Calibrated Linear Regression
 }
 
 \description{
-The function "camel.slim" implements a family of Lasso variants for estimating high dimensional sparse linear models including Dantzig Selector, LAD Lasso, SQRT Lasso for estimating high dimensional sparse linear model. We adopt the combination of the dual smoothing and monotone fast iterative soft-thresholding algorithm. The computation is memory-optimized using the sparse matrix output. 
+The function "camel.slime" implements LAD/L1 Lasso, SQRT/L2 Lasso, and carlibrated Dantizg selector using L1 regularization.
 }
 
 \usage{
@@ -27,18 +27,10 @@ camel.slim(X, Y, lambda = NULL, nlambda = NULL, lambda.min.ratio = NULL,
   \item{max.ite}{The iteration limit. The default value is 1e4.}
   \item{mu}{The smoothing parameter. The default value is 0.01.}
   \item{intercept}{Whether the intercept is included in the model. The defulat value is \code{TRUE}.}
-  \item{verbose}{Tracing information printing is disabled if \code{verbose = FALSE}. The default value is \code{TRUE}.}
+  \item{verbose}{Tracing information is disabled if \code{verbose = FALSE}. The default value is \code{TRUE}.}
   }
 \details{ 
-Dantzig selector solves the following optimization problem\cr
-\deqn{
-    \min || \beta ||_1, \quad \textrm{s.t. } || X'(Y - X \beta) ||_{\infty} < \lambda
-    }\cr
-\eqn{L_q} loss Lasso solves the following optimization problem\cr
-\deqn{
-    \min n^{-\frac{1}{q}}|| Y - X \beta ||_q + \lambda || \beta ||_1
-    }\cr
-    where \eqn{1<= q <=2}. Lq Lasso is equivalent to LAD Lasso and SQR Lasso when \eqn{q=1} and \eqn{q=2} respectively.
+Calibrated Linear Regression adjust the regularization with respect to the noise level. Thus it achieves both improved finite sample performance and tuning insensitiveness.
 }
 \value{
 An object with S3 class \code{"camel.slim"} is returned: 
@@ -67,7 +59,7 @@ An object with S3 class \code{"camel.slim"} is returned:
 }
 
 \author{
-Xingguo Li, Tuo Zhao and Han Liu \cr
+Xingguo Li, Tuo Zhao, and Han Liu \cr
 Maintainer: Xingguo Li <xingguo.leo@gmail.com>
 }
 
@@ -75,9 +67,6 @@ Maintainer: Xingguo Li <xingguo.leo@gmail.com>
 1. A. Belloni, V. Chernozhukov and L. Wang. Pivotal recovery of sparse signals via conic programming. \emph{Biometrika}, 2012.\cr
 2. L. Wang. L1 penalized LAD estimator for high dimensional linear regression. \emph{Journal of Multivariate Analysis}, 2013.\cr
 3. E. Candes and T. Tao. The Dantzig selector: Statistical estimation when p is much larger than n. \emph{Annals of Statistics}, 2007.\cr
-4. A. Beck and M. Teboulle. Fast gradient-based algorithms for constrained total variation image denoising and deblurring problems. \emph{IEEE Transactions on Image Processing}, 2009.\cr
-5. B. He and X. Yuan. On non-ergodic convergence rate of Douglas-Rachford alternating direction method of multipliers. \emph{Technical Report}, 2012. \cr
-6. J. Liu and J. Ye. Efficient L1/Lq Norm Regularization. \emph{Technical Report}, 2010.
 }
 
 \seealso{

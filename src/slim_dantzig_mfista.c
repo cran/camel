@@ -64,10 +64,7 @@ void slim_dantzig_mfista(double *b, double *A, double *beta, int *n, int *d, dou
         ilambda = lambda[m];
         // start = clock();
         get_residual(bAy1, b, A, y1, idx_y1, &dim, &size_y1); // bAy1=b-A*y1
-    //start = clock();
         get_dual(u_y, bAy1, &imu, &dim); //u_y=proj(bAy1)
-    //end = clock();
-    //runt += (end-start)/ (double)CLOCKS_PER_SEC;
         get_grad(g, A, u_y, &dim, &dim); //g=-A*u_y
         get_base(&obj_base, u_y, bAy1, &imu, &dim); //obj_base=u_y*bAy1-imu*||u_y||_2^2/2
         gap_track = 1;
@@ -91,10 +88,7 @@ void slim_dantzig_mfista(double *b, double *A, double *beta, int *n, int *d, dou
             }
             Q += z1_norm1*ilambda;
             get_residual(bAz1, b, A, z1, idx_z1, &dim, &size_z1); // bAz1=b-A*z1
-    //start = clock();
             get_dual(u_z, bAz1, &imu, &dim); //u_z=proj(bAz1)
-    //end = clock();
-    //runt += (end-start)/ (double)CLOCKS_PER_SEC;
             get_base(&Fz, u_z, bAz1, &imu, &dim); //obj_base=u_z*bAz1-imu*||u_z||_2^2/2
             
             Fz += z1_norm1*ilambda;
@@ -122,18 +116,12 @@ void slim_dantzig_mfista(double *b, double *A, double *beta, int *n, int *d, dou
         }
         t2 = (1+sqrt(1+4*t1*t1))/2;
         get_residual(bAz1, b, A, z1, idx_z1, &dim, &size_z1); // bAz1=b-A*z1
-    //start = clock();
         get_dual(u_z, bAz1, &imu, &dim); //u_z=proj(bAz1)
-    //end = clock();
-    //runt += (end-start)/ (double)CLOCKS_PER_SEC;
         get_base(&Fz, u_z, bAz1, &imu, &dim); //obj_base=u_z*bAz1-imu*||u_z||_2^2/2
         Fz += z1_norm1*ilambda;
 
         get_residual(bAx0, b, A, x0, idx_x0, &dim, &size_x0); // bAx0=b-A*x0
-    //start = clock();
         get_dual(u_x, bAx0, &imu, &dim); //u_x=proj(bAx0)
-    //end = clock();
-    //runt += (end-start)/ (double)CLOCKS_PER_SEC;
         get_base(&Fx, u_x, bAx0, &imu, &dim); //obj_base=u_x*bAx0-imu*||u_x||_2^2/2
         Fx += l1norm(x0, dim)*ilambda;
         
@@ -170,10 +158,7 @@ void slim_dantzig_mfista(double *b, double *A, double *beta, int *n, int *d, dou
         opt_dif = 1;
         y1_dif = 1;
         get_residual(bAy1, b, A, y1, idx_y1, &dim, &size_y1); // bAy1=b-A*y1
-    //start = clock();
         get_dual(u_y, bAy1, &imu, &dim); //u_y=proj(bAy1)
-    //end = clock();
-    //runt += (end-start)/ (double)CLOCKS_PER_SEC;
         get_grad(g, A, u_y, &dim, &dim); //g=-A*u_y
         while(y1_dif>eps1 && ite1<max_ite1){
         //while(opt_dif>eps1 && ite1<max_ite1){
@@ -201,10 +186,7 @@ void slim_dantzig_mfista(double *b, double *A, double *beta, int *n, int *d, dou
                     }
                     Q += z1_norm1*ilambda;
                     get_residual(bAz1, b, A, z1, idx_z1, &dim, &size_z1); // bAz1=b-A*z1
-    //start = clock();
                     get_dual(u_z, bAz1, &imu, &dim); //u_z=proj(bAz1)
-    //end = clock();
-    //runt += (end-start)/ (double)CLOCKS_PER_SEC;
                     get_base(&Fz, u_z, bAz1, &imu, &dim); //obj_base=u_z*bAz1-imu*||u_z||_2^2/2
                     Fz += z1_norm1*ilambda;
                     if(Fz>Q) T = T/ratio2;
@@ -229,19 +211,13 @@ void slim_dantzig_mfista(double *b, double *A, double *beta, int *n, int *d, dou
             }
 
             t2 = (1+sqrt(1+4*t1*t1))/2;
-            get_residual(bAz1, b, A, z1, idx_z1, &dim, &size_z1); // bAz1=b-A*z1
-    start = clock();
+            get_residual(bAz1, b, A, z1, idx_z1, &dim, &size_z1); // bAz1=b-A*
             get_dual(u_z, bAz1, &imu, &dim); //u_z=proj(bAz1)
-    end = clock();
-    runt += (end-start)/ (double)CLOCKS_PER_SEC;
             get_base(&Fz, u_z, bAz1, &imu, &dim); //obj_base=u_z*bAz1-imu*||u_z||_2^2/2
             Fz += z1_norm1*ilambda;
 
             get_residual(bAx0, b, A, x0, idx_x0, &dim, &size_x0); // bAx0=b-A*x0
-    start = clock();
             get_dual(u_x, bAx0, &imu, &dim); //u_x=proj(bAx0)
-    end = clock();
-    runt += (end-start)/ (double)CLOCKS_PER_SEC;
             get_base(&Fx, u_x, bAx0, &imu, &dim); //obj_base=u_x*bAx0-imu*||u_x||_2^2/2
             Fx += l1norm(x0, dim)*ilambda;
             
@@ -279,27 +255,8 @@ void slim_dantzig_mfista(double *b, double *A, double *beta, int *n, int *d, dou
             t1 = t2;
 
             get_residual(bAy1, b, A, y1, idx_y1, &dim, &size_y1); // bAy1=b-A*y1
-    //start = clock();
             get_dual(u_y, bAy1, &imu, &dim); //u_y=proj(bAy1)
-    //end = clock();
-    //runt += (end-start)/ (double)CLOCKS_PER_SEC;
             get_grad(g, A, u_y, &dim, &dim); //g=-A*u_y
-
-            //get_residual(bAx0, b, A, x0, idx_x0, &dim, &size_x0); // bAx0=b-A*x0
-    //start = clock();
-            //get_dual(u_x, bAx0, &imu, &dim); //u_x=proj(bAx0)
-    //end = clock();
-    //runt += (end-start)/ (double)CLOCKS_PER_SEC;
-            //get_grad(gx, A, u_x, &dim, &dim); //g=-A*u_y
-            //opt_dif = 0;
-            //for(i=0;i<dim;i++){
-            //    if(x0[i]!=0){
-            //        opt_dif = max(opt_dif, fabs(gx[i]+ilambda*sign(x0[i])));
-            //    }
-            //    else {
-            //        opt_dif = max(opt_dif, max(fabs(gx[i])-ilambda, 0));
-             //   }
-            //}
             ite1++;
             ite21 += ite2;
         }

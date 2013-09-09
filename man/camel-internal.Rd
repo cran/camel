@@ -8,6 +8,7 @@
 \alias{camel.slim.lad.mfista}
 \alias{camel.slim.sqrt.mfista}
 \alias{camel.slim.dantzig.mfista}
+\alias{camel.cmr.mfista}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{Internal camel functions}
 \description{
@@ -26,6 +27,8 @@ camel.slim.sqrt.mfista(Y, X, lambda, nlambda, n, d, maxdf, mu, max.ite, prec,
                        intercept, verbose)
 camel.slim.dantzig.mfista(Y, X, lambda, nlambda, n, d, maxdf, mu, max.ite, prec, 
                           intercept, verbose)
+camel.cmr.mfista(Y, X, lambda, nlambda, n, d, m, mu, max.ite, prec)
+
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -36,6 +39,7 @@ camel.slim.dantzig.mfista(Y, X, lambda, nlambda, n, d, maxdf, mu, max.ite, prec,
   \item{fold}{The number of fold for cross validatio.}
   \item{n}{The number of observations (sample size).}
   \item{d}{Dimension of data.}
+  \item{m}{Columns of parameters in multivariate regression.}
   \item{maxdf}{Maximal degree of freedom.}
   \item{lambda}{Grid of non-negative values for the regularization parameter lambda.}
   \item{nlambda}{The number of the regularization parameter lambda.}
@@ -57,7 +61,7 @@ camel.slim.dantzig.mfista(Y, X, lambda, nlambda, n, d, maxdf, mu, max.ite, prec,
 %}
 
 \author{
-Xingguo Li, Tuo Zhao and Han Liu \cr
+Xingguo Li, Tuo Zhao, and Han Liu \cr
 Maintainer: Xingguo Li <xingguo.leo@gmail.com>
 }
 %\note{
@@ -66,5 +70,5 @@ Maintainer: Xingguo Li <xingguo.leo@gmail.com>
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
-\code{\link{camel.tiger}}, \code{\link{camel.slim}} and \code{\link{camel-package}}.
+\code{\link{camel.tiger}}, \code{\link{camel.slim}}, \code{\link{camel.cmr}} and \code{\link{camel-package}}.
 }

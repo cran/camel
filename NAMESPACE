@@ -10,7 +10,10 @@ export("camel.tiger",
        "camel.slim.lad.mfista",
        "camel.slim.sqrt.mfista",
        "camel.slim.dantzig.mfista",
+       "camel.cmr",
+       "camel.cmr.mfista",
        "camel.plot",
+       "print.cmr",
        "print.slim",
        "print.tiger",
        "print.select",
@@ -20,6 +23,7 @@ export("camel.tiger",
        "plot.roc",
        "plot.select",
        "plot.sim")
+S3method("print", "cmr")
 S3method("print", "tiger")
 S3method("print", "slim")
 S3method("print", "roc")
